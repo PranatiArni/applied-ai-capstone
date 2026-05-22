@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Daily Study Tracker</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { margin-bottom: 0.25rem; }
+    .meta { color: #666; margin-bottom: 1.5rem; }
+    .entry { border: 1px solid #ddd; border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; }
+    .entry .head { display: flex; justify-content: space-between; font-size: 0.9rem; color: #555; margin-bottom: 0.5rem; }
+    a.btn { display: inline-block; background: #1a2540; color: #fff; padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; }
+    .filter { margin: 1rem 0 0.5rem; }
+    .filter-label { color: #666; margin-right: 0.5rem; font-size: 0.9rem; }
+    .pill { display: inline-block; padding: 0.25rem 0.75rem; margin: 0 0.25rem 0.25rem 0; border: 1px solid #ddd; border-radius: 999px; color: #555; text-decoration: none; font-size: 0.9rem; }
+    .pill.active { background: #1a2540; color: #fff; border-color: #1a2540; }
+  </style>
+</head>
+<body>
+  <h1>Daily Study Tracker</h1>
+  <p class="meta">A simple log of what I study each day.</p>
+
+  <a class="btn" href="{{ url_for('new_entry') }}">+ New entry</a>
+
+  {% if subjects %}
+  <div class="filter">
+    <span class="filter-label">Filter:</span>
+    <a class="pill {% if not active_subject %}active{% endif %}"
+       href="{{ url_for('home') }}">All</a>
+    {% for s in subjects %}
+      <a class="pill {% if s.lower() == (active_subject or '').lower() %}active{% endif %}"
+         href="{{ url_for('home', subject=s) }}">{{ s }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <h2 style="margin-top: 2rem;">Entries ({{ entries|length }})</h2>
+  {% if entries %}
+    {% for entry in entries %}
+      <div class="entry">
+        <div class="head"><span>{{ entry.date }}</span><span>{{ entry.subject }}</span></div>
+        <p>{{ entry.notes }}</p>
+      </div>
+    {% endfor %}
+  {% else %}
+    {% if active_subject %}
+      <p>No entries for "{{ active_subject }}".</p>
+    {% else %}
+      <p>No entries yet.</p>
+    {% endif %}
+  {% endif %}
+</body>
+</html>
